@@ -60,12 +60,29 @@ public class Window {
 	 * The window loop.
 	 */
 	private void loop() {
+		//Checking whether the window should close.
 		while(!glfwWindowShouldClose(id)) {
 			glfwPollEvents();
 			
-			
-			
 			glfwSwapBuffers(id);
+		}
+	}
+	/**
+	 * Sets the title of the window.
+	 * @param title
+	 */
+	public void setTitle(String title) {
+		glfwSetWindowTitle(id, title);
+	}
+	/**
+	 * Sets the visibility of the window.
+	 * @param visible
+	 */
+	public void setVisible(boolean visible) {
+		if(visible) {
+			glfwShowWindow(id);
+		} else {
+			glfwHideWindow(id);
 		}
 	}
 	/**
@@ -74,6 +91,12 @@ public class Window {
 	public void center() {
 		Vector2i size = getSize();
 		glfwSetWindowPos(id, (videoMode.width() - size.x)/2, (videoMode.height() - size.y)/2);
+	}
+	/**
+	 * Disposes the window.
+	 */
+	public void dispose() {
+		glfwDestroyWindow(id);
 	}
 	
 	/**
