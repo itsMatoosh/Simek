@@ -24,6 +24,9 @@ public class Main {
 		
 		//Creating a window.
 		WindowManager.createMainWindow();
+		
+		//Closing the GLFW before closing.
+		glfwTerminate();
 	}
 
 }

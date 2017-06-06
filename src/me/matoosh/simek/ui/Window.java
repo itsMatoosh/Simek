@@ -2,7 +2,11 @@ package me.matoosh.simek.ui;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import java.nio.IntBuffer;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 
 /**
  * Represents a single window.
@@ -38,9 +42,7 @@ public class Window {
 		//Initializing the window.
 		System.out.println("Creating window: " + title + "...");
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		this.width = 640;
-		this.height = 480;
-		id = glfwCreateWindow(width, height, "simek", 0, 0);
+		id = glfwCreateWindow(640, 480, "simek", 0, 0);
 		if(id == 0) {
 			throw new IllegalStateException("Couldn't create the window: " + title);
 		}	
@@ -52,6 +54,10 @@ public class Window {
 		//Showing the window.
 		glfwShowWindow(id);
 		
+		//Creating the opengl context.
+		glfwMakeContextCurrent(id);
+		GL.createCapabilities();
+		
 		//Initializing the window main loop.
 		loop();
 	}
@@ -61,12 +67,48 @@ public class Window {
 	private void loop() {
 		while(!glfwWindowShouldClose(id)) {
 			glfwPollEvents();
+			
+			glfwSwapBuffers(id);
 		}
 	}
 	/**
 	 * Centers the window on screen.
 	 */
 	public void center() {
-		glfwSetWindowPos(id, (videoMode.width() - width)/2, (videoMode.height() - height)/2);
+		WindowSize size = getSize();
+		glfwSetWindowPos(id, (videoMode.width() - size.width)/2, (videoMode.height() - size.height)/2);
+	}
+	
+	/**
+	 * Gets the size of the window.
+	 * @return
+	 */
+	public WindowSize getSize() {
+		IntBuffer w = BufferUtils.createIntBuffer(1);
+		IntBuffer h = BufferUtils.createIntBuffer(1);
+		glfwGetWindowSize(id, w, h);
+		
+		WindowSize size = new WindowSize(w, h);
+		
+		return size;
+	}
+	/**
+	 * The size of a window.
+	 * @author Mateusz Rebacz
+	 *
+	 */
+	public class WindowSize {
+		public int width;
+		public int height;
+		
+		/**
+		 * Creates a new window size object based on the IntBuffer contents.
+		 * @param width
+		 * @param height
+		 */
+		public WindowSize(IntBuffer width, IntBuffer height) {
+			this.width = width.get(0);
+			this.height = height.get(0);
+		}
 	}
 }
